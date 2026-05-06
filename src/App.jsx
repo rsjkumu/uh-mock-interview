@@ -56,35 +56,35 @@ Output in plain text. Do NOT use markdown bolding (like ** or <strong>). Use upp
     `;
 
     try {
-      const apiKey = ""; // API key is injected by the execution environment
-      const payload = {
-        contents: [{ parts: [{ text: promptText }] }]
-      };
-
+      const apiKey = import.meta.env.VITE_API_KEY;
+      
       const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-        contents: [{
-            parts: [{ text: prompt }]
-        }]
-    })
-});
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{ text: promptText }]
+          }]
+        })
+      });
 
-      if (!response.ok) throw new Error('Failed to analyze resume.');
+      if (!response.ok) {
+        const errorDetails = await response.json();
+        console.error('Google Error Detail:', errorDetails);
+        throw new Error('Failed to analyze resume.');
+      }
 
       const data = await response.json();
       const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
       setResumeAnalysis(aiText.trim());
     } catch (err) {
-      console.error(err);
+      console.error('Catch Error:', err);
       setAnalysisError('An error occurred during resume analysis. Please try again.');
     } finally {
       setIsAnalyzing(false);
     }
-  };
 
   // Handle Form Submission and API Call
   const generateInterviewPrep = async () => {
