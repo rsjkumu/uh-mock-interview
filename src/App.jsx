@@ -184,7 +184,7 @@ You MUST separate your response exactly like this:
 
     try {
       // Access API key from the environment
-      const apiKey = ""; // API key is injected by the execution environment
+      const apiKey = import.meta.env.VITE_API_KEY; // API key is injected by the execution environment
       
       const payload = {
         contents: [{ parts: [{ text: promptText }] }],
